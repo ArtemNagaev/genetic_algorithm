@@ -259,9 +259,9 @@ public class Controller implements Initializable {
     }
 
 
-    answer.setText("Значение функции: " + String.valueOf(f(functionString,new_population_list,0))+ " Итераций: " + String.valueOf(iteration) + " Значение переменных:");
+    answer.setText("Значение функции: " + String.valueOf(f(functionString,new_population_list,0))+ " Итераций: " + String.valueOf(iteration) + " Значение переменных:\n");
     for (int i =0;i<var_count;i++){
-      answer.appendText(new_population_list.get(0).get(i)+ (" "));
+      answer.appendText(new_population_list.get(0).get(i)+ (" ") + Integer.parseInt(new_population_list.get(0).get(i),2) + ("\n"));
     }
   }
 
