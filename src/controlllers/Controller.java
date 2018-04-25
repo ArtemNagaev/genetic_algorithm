@@ -7,9 +7,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -21,6 +26,7 @@ import javafx.util.Pair;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import jdk.nashorn.api.tree.WhileLoopTree;
 import main.ValueComparator;
 
 
@@ -64,19 +70,23 @@ public class Controller implements Initializable {
     ScriptEngine engine = manager.getEngineByName("js");
     Object result;
 
-    //создание строки функции с параметрами
-    String tmpString = function;
-    int count = 0;
-    for (int i = 0; i < tmpString.length(); i++) {
-      if (Character.isLetter(tmpString.charAt(i))) {
-        tmpString = tmpString.replace(String.valueOf(tmpString.charAt(i)),
-            String.valueOf(Integer.parseInt(population_list.get(index).get(count), 2)));
-//        System.out.println(population_list.get(index).get(count));
-//        System.out.println(String.valueOf(Integer.parseInt(population_list.get(index).get(count), 2)));
-        count++;
-      }
+    Pattern p = Pattern.compile("\\b\\w\\b");
+    Matcher m = p.matcher(function);
+
+    List<String> var = new ArrayList<>();
+    while (m.find()){
+      var.add(function.substring(m.start(), m.end()));
     }
-    return (int) engine.eval(tmpString);
+    Set<String> tmpVar = new HashSet<>();
+    tmpVar.addAll(var);
+    var.clear();
+    var.addAll(tmpVar);
+
+    //создание строки функции с параметрами
+    for (int i = 0; i<population_list.get(index).size(); i++) {
+      function = function.replace(var.get(i), String.valueOf(Integer.parseInt(population_list.get(index).get(i),2)));
+    }
+    return (int) engine.eval(function);
   }
 
   //Функция скрещивания
@@ -101,13 +111,14 @@ public class Controller implements Initializable {
   List<String> crossoverSpecimen(List<String> Specimen1,List<String> Specimen2){
     String s1="";
     String s2="";
+    String resultString = "";
     for (int i=0;i<Specimen1.size();i++){
-      s1+=Specimen1.get(i);
+      s1=Specimen1.get(i);
+      s2=Specimen2.get(i);
+      resultString += crossoverStrings(s1,s2);
     }
-    for (int i=0;i<Specimen2.size();i++){
-      s2+=Specimen2.get(i);
-    }
-    String resultString = crossoverStrings(s1,s2);
+
+
 
     List<String> result = new ArrayList<>();
 
@@ -165,11 +176,24 @@ public class Controller implements Initializable {
 
     //подсчёт переменных
     int var_count=0;
-    for (int i=0; i<functionString.length(); i++){
-      if (Character.isLetter(functionString.charAt(i))){
-        var_count++;
-      }
+    Pattern p = Pattern.compile("\\b\\w\\b");
+    Matcher m = p.matcher(functionString);
+
+    List<String> var = new ArrayList<>();
+    while (m.find()){
+      var.add(functionString.substring(m.start(), m.end()));
     }
+    Set<String> tmpVar = new HashSet<>();
+    tmpVar.addAll(var);
+    var.clear();
+    var.addAll(tmpVar);
+    var_count = var.size();
+
+//    for (int i=0; i<functionString.length(); i++){
+//      if (Character.isLetter(functionString.charAt(i))){
+//        var_count++;
+//      }
+//    }
 
     //вывод числа переменных
     output.setText(String.valueOf(var_count));
