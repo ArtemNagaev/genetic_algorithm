@@ -64,7 +64,7 @@ public class Controller implements Initializable {
   }
 
   //Подсчёт значения функции
-  int f(String function, List<List<String>> population_list, int index ) throws ScriptException {
+  double f(String function, List<List<String>> population_list, int index ) throws ScriptException {
     //инициализация парсера
     ScriptEngineManager manager = new ScriptEngineManager();
     ScriptEngine engine = manager.getEngineByName("js");
@@ -86,7 +86,7 @@ public class Controller implements Initializable {
     for (int i = 0; i<population_list.get(index).size(); i++) {
       function = function.replace(var.get(i), String.valueOf(Integer.parseInt(population_list.get(index).get(i),2)));
     }
-    return (int) engine.eval(function);
+    return Double.parseDouble(engine.eval(function).toString());
   }
 
   //Функция скрещивания
@@ -218,11 +218,11 @@ public class Controller implements Initializable {
       System.out.println();
     }
 
-    int best = f(functionString,population_list,0);
+    double best = f(functionString,population_list,0);
 
 
     List<List<String>> new_population_list = new ArrayList<>();
-    List<Pair<Integer,Integer>> f = new ArrayList<Pair<Integer,Integer>>();
+    List<Pair<Integer,Double>> f = new ArrayList<Pair<Integer,Double>>();
 
     int iteration=0;
     //Основной цикл
