@@ -70,7 +70,7 @@ public class Controller implements Initializable {
     ScriptEngine engine = manager.getEngineByName("js");
     Object result;
 
-    Pattern p = Pattern.compile("\\b\\w\\b");
+    Pattern p = Pattern.compile("\\b[a-z]\\b");
     Matcher m = p.matcher(function);
 
     List<String> var = new ArrayList<>();
@@ -176,7 +176,7 @@ public class Controller implements Initializable {
 
     //подсчёт переменных
     int var_count=0;
-    Pattern p = Pattern.compile("\\b\\w\\b");
+    Pattern p = Pattern.compile("\\b[a-z]\\b");
     Matcher m = p.matcher(functionString);
 
     List<String> var = new ArrayList<>();
